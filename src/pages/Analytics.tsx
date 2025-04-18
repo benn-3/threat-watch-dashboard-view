@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAppSelector } from '@/hooks/use-redux-hooks';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -43,7 +42,7 @@ const Analytics = () => {
   const filteredThreats = calculateTimeRangeData();
 
   // ---- Data for Pie Charts ----
-  
+
   // Threat Type Distribution
   const typeData = React.useMemo(() => {
     const typeCounts: Record<string, number> = {};
@@ -79,7 +78,7 @@ const Analytics = () => {
   }, [filteredThreats]);
   
   // ---- Data for Bar Charts ----
-  
+
   // Threats by Date
   const threatsByDate = React.useMemo(() => {
     const dateCounts: Record<string, number> = {};

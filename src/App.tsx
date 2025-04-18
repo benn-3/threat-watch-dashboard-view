@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import Threats from "./pages/Threats";
 import ThreatMap from "./pages/ThreatMap";
 import Analytics from "./pages/Analytics";
+import Network from "./pages/Network";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/layout/Layout";
 import { useEffect } from "react";
@@ -50,6 +51,7 @@ const App = () => {
                 <Route path="/threats" element={<Threats />} />
                 <Route path="/map" element={<ThreatMap />} />
                 <Route path="/analytics" element={<Analytics />} />
+                <Route path="/network" element={<Network />} />
               </Route>
               
               <Route path="*" element={<NotFound />} />
