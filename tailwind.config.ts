@@ -61,6 +61,26 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Custom DashGuard colors
+				dashguard: {
+					primary: '#5A31F4',
+					secondary: '#1A1F2C',
+					accent: '#22D3EE',
+					success: '#10B981',
+					warning: '#F59E0B',
+					danger: '#EF4444',
+					'light-purple': '#8B5CF6',
+					'dark-purple': '#4338CA',
+					'navy': '#0F172A',
+					'navy-light': '#1E293B',
+					'cyan': '#06B6D4'
+				},
+				threat: {
+					high: '#EF4444',
+					medium: '#F59E0B',
+					low: '#10B981',
+					info: '#3B82F6'
 				}
 			},
 			borderRadius: {
