@@ -14,6 +14,8 @@ import Analytics from "./pages/Analytics";
 import Network from "./pages/Network";
 import Settings from "./pages/Settings";
 import Siem from "./pages/Siem";
+import Reports from "./pages/Reports";
+import Entities from "./pages/Entities";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/layout/Layout";
 import { useEffect } from "react";
@@ -56,6 +58,8 @@ const App = () => {
                 <Route path="/network" element={<Network />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/siem" element={<Siem />} />
+                <Route path="/reports" element={<Reports />} />
+                <Route path="/entities" element={<Entities />} />
               </Route>
               
               <Route path="*" element={<NotFound />} />
