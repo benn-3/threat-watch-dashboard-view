@@ -12,6 +12,8 @@ import Threats from "./pages/Threats";
 import ThreatMap from "./pages/ThreatMap";
 import Analytics from "./pages/Analytics";
 import Network from "./pages/Network";
+import Settings from "./pages/Settings";
+import Siem from "./pages/Siem";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/layout/Layout";
 import { useEffect } from "react";
@@ -52,6 +54,8 @@ const App = () => {
                 <Route path="/map" element={<ThreatMap />} />
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/network" element={<Network />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/siem" element={<Siem />} />
               </Route>
               
               <Route path="*" element={<NotFound />} />
