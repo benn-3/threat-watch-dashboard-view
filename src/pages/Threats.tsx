@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { 
@@ -58,7 +57,6 @@ import { RootState } from '@/lib/store';
 import { Threat, ThreatSeverity, ThreatType, fetchThreatsSuccess, selectThreat, setFilters, resetFilters } from '@/features/threats/threatSlice';
 import { mockThreats } from '@/data/mockThreats';
 
-// Badge renderer for threat severity
 const SeverityBadge = ({ severity }: { severity: ThreatSeverity }) => {
   const styles = {
     high: 'bg-threat-high/15 text-threat-high border-threat-high hover:bg-threat-high/20',
@@ -89,7 +87,6 @@ const SeverityBadge = ({ severity }: { severity: ThreatSeverity }) => {
   );
 };
 
-// Badge renderer for threat types
 const TypeBadge = ({ type }: { type: ThreatType }) => {
   const styles = {
     malware: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
@@ -114,7 +111,6 @@ const TypeBadge = ({ type }: { type: ThreatType }) => {
   return <Badge variant="secondary" className={styles[type]}>{labels[type]}</Badge>;
 };
 
-// Tag component
 const TagBadge = ({ tag }: { tag: string }) => {
   return (
     <Badge 
@@ -126,7 +122,6 @@ const TagBadge = ({ tag }: { tag: string }) => {
   );
 };
 
-// Threat detail drawer component
 const ThreatDetailDrawer = ({ threat, onClose }: { threat: Threat | null; onClose: () => void }) => {
   if (!threat) return null;
 
@@ -234,7 +229,6 @@ const ThreatDetailDrawer = ({ threat, onClose }: { threat: Threat | null; onClos
           </div>
         </div>
 
-        {/* IP, Domain, URL, or Hash details if present */}
         {(threat.ip || threat.domain || threat.url || threat.hash) && (
           <div className="grid grid-cols-1 gap-4 mb-4">
             {threat.ip && (
@@ -271,7 +265,6 @@ const ThreatDetailDrawer = ({ threat, onClose }: { threat: Threat | null; onClos
   );
 };
 
-// Filters component
 const ThreatFilters = ({ onApplyFilters, onResetFilters }: any) => {
   const [selectedSeverities, setSelectedSeverities] = useState<ThreatSeverity[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<ThreatType[]>([]);
@@ -402,33 +395,28 @@ const Threats = () => {
     direction: 'asc' | 'desc';
   }>({ key: 'dateAdded', direction: 'desc' });
 
-  // Load mock threats data when component mounts
   useEffect(() => {
     if (threats.length === 0) {
       dispatch(fetchThreatsSuccess(mockThreats));
     }
   }, [dispatch, threats.length]);
 
-  // Handle search
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
     dispatch(setFilters({ searchQuery: query }));
   };
 
-  // Handle filter apply
   const handleApplyFilters = (newFilters: any) => {
     dispatch(setFilters(newFilters));
     setIsFilterOpen(false);
   };
 
-  // Handle filter reset
   const handleResetFilters = () => {
     dispatch(resetFilters());
     setIsFilterOpen(false);
   };
 
-  // Handle sorting
   const handleSort = (key: keyof Threat) => {
     setSortConfig(prevConfig => ({
       key,
@@ -436,7 +424,6 @@ const Threats = () => {
     }));
   };
 
-  // Apply sorting to threats
   const sortedThreats = [...filteredThreats].sort((a, b) => {
     if (sortConfig.key === null) return 0;
     
@@ -454,13 +441,11 @@ const Threats = () => {
     return aValue! > bValue! ? 1 * modifier : -1 * modifier;
   });
 
-  // Handle row click to show details
   const handleRowClick = (threatId: string) => {
     dispatch(selectThreat(threatId));
     setIsDetailOpen(true);
   };
 
-  // Close detail drawer
   const handleCloseDetail = () => {
     setIsDetailOpen(false);
   };
@@ -507,7 +492,6 @@ const Threats = () => {
         </div>
       </div>
 
-      {/* Filter tags */}
       {(filters.severity.length > 0 || filters.type.length > 0 || filters.source.length > 0) && (
         <div className="flex flex-wrap gap-2 items-center">
           <span className="text-sm text-muted-foreground">Active filters:</span>
@@ -558,7 +542,6 @@ const Threats = () => {
         </div>
       )}
 
-      {/* Results table */}
       <Card className="dashboard-card">
         <CardHeader className="py-4">
           <div className="flex justify-between items-center">
@@ -667,7 +650,6 @@ const Threats = () => {
         </CardContent>
       </Card>
 
-      {/* Filters drawer */}
       <Drawer open={isFilterOpen} onOpenChange={setIsFilterOpen}>
         <DrawerContent>
           <DrawerHeader>
@@ -685,7 +667,6 @@ const Threats = () => {
         </DrawerContent>
       </Drawer>
 
-      {/* Detail drawer */}
       <Drawer open={isDetailOpen} onOpenChange={setIsDetailOpen}>
         <ThreatDetailDrawer threat={selectedThreat} onClose={handleCloseDetail} />
       </Drawer>

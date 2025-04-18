@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,13 +14,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Layers, Maximize, Minimize, Globe, Activity, MapPin, AlertTriangle, ShieldAlert, Info } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 
-// We will import and use these in useEffect to avoid SSR issues
 let L: any;
 let map: any;
 let threatMarkers: any[] = [];
 let markerLayer: any;
 
-// Threat severity colors
 const severityColors = {
   high: '#EF4444',
   medium: '#F59E0B',
@@ -50,22 +47,16 @@ const ThreatMap = () => {
     );
   };
 
-  // Filter threats based on selected criteria
   useEffect(() => {
     const filtered = threats.filter(threat => (
-      // Filter by severity
       selectedSeverities.includes(threat.severity) &&
-      // Filter by confidence threshold
       threat.confidence >= confidenceThreshold &&
-      // Filter by country if one is selected
       (selectedCountry ? threat.location?.country === selectedCountry : true) &&
-      // Only include threats with location data
       threat.location?.latitude && threat.location?.longitude
     ));
     
     setFilteredThreats(filtered);
     
-    // Calculate stats by country
     const countryStats: Record<string, number> = {};
     filtered.forEach(threat => {
       if (threat.location?.country) {
@@ -78,20 +69,16 @@ const ThreatMap = () => {
       .sort((a, b) => b.count - a.count);
     
     setStatsByCountry(statsArray);
-    
   }, [threats, selectedSeverities, confidenceThreshold, selectedCountry]);
 
-  // Initialize and update map when filteredThreats changes
   useEffect(() => {
     if (typeof window === 'undefined') return;
     
-    // Dynamically import Leaflet
     const initializeMap = async () => {
       if (!mapContainerRef.current) return;
       
       L = await import('leaflet');
       
-      // Initialize map if not already done
       if (!mapLoaded) {
         map = L.map(mapContainerRef.current, {
           center: [20, 0],
@@ -101,31 +88,24 @@ const ThreatMap = () => {
           zoomControl: false
         });
         
-        // Add zoom control to top-right
         L.control.zoom({
           position: 'topright'
         }).addTo(map);
         
-        // Add tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
         
-        // Create layer group for markers
         markerLayer = L.layerGroup().addTo(map);
         setMapLoaded(true);
       }
       
-      // Update markers when filteredThreats changes
       if (mapLoaded) {
-        // Clear existing markers
         markerLayer.clearLayers();
         threatMarkers = [];
         
-        // Create new markers based on filtered threats
         filteredThreats.forEach(threat => {
           if (threat.location && threat.location.latitude && threat.location.longitude) {
-            // Custom icon based on threat severity
             const icon = L.divIcon({
               html: `<div style="background-color: ${severityColors[threat.severity]}; border-radius: 50%; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white;">${
                 threat.severity === 'high' ? '!' : 
@@ -136,13 +116,11 @@ const ThreatMap = () => {
               iconSize: [24, 24]
             });
             
-            // Create marker
             const marker = L.marker([threat.location.latitude, threat.location.longitude], {
               icon,
-              threat: threat // Store the threat data on the marker for use in popups
+              threat: threat
             });
             
-            // Add popup
             marker.bindPopup(`
               <div style="min-width: 200px;">
                 <div style="font-weight: bold; margin-bottom: 5px;">${threat.indicator}</div>
@@ -161,7 +139,6 @@ const ThreatMap = () => {
           }
         });
         
-        // Change map style if needed
         map.eachLayer((layer: any) => {
           if (layer instanceof L.TileLayer) {
             map.removeLayer(layer);
@@ -178,14 +155,12 @@ const ThreatMap = () => {
           }).addTo(map);
         }
         
-        // Add marker layer back on top
         markerLayer.bringToFront();
       }
     };
     
     initializeMap();
     
-    // Cleanup on unmount
     return () => {
       if (map) {
         map.remove();
@@ -197,7 +172,6 @@ const ThreatMap = () => {
     };
   }, [filteredThreats, mapLoaded, viewType, mapView]);
 
-  // Handle fullscreen toggle
   const toggleFullscreen = () => {
     setIsFullScreen(!isFullScreen);
   };
@@ -212,7 +186,6 @@ const ThreatMap = () => {
       </div>
 
       <div className={`grid gap-6 ${isFullScreen ? 'h-full grid-rows-[auto_1fr]' : 'md:grid-cols-3'}`}>
-        {/* Map container */}
         <Card className={`dashboard-card ${isFullScreen ? 'col-span-3 row-span-1' : 'md:col-span-2'} relative overflow-hidden`}>
           <CardHeader className="p-4 flex flex-row items-center justify-between">
             <div>
@@ -245,7 +218,6 @@ const ThreatMap = () => {
               className={`w-full ${isFullScreen ? 'h-[calc(100vh-160px)]' : 'h-[500px]'}`}
             ></div>
 
-            {/* Map controls overlay */}
             <div className="absolute bottom-4 left-4 z-10 space-y-2">
               <Button
                 variant={mapView === 'standard' ? 'default' : 'outline'}
@@ -269,15 +241,12 @@ const ThreatMap = () => {
           </CardContent>
         </Card>
 
-        {/* Filters and stats */}
         <div className={`space-y-6 ${isFullScreen ? 'absolute right-4 top-20 w-80 z-10' : ''}`}>
-          {/* Filters */}
           <Card className="dashboard-card">
             <CardHeader>
               <CardTitle>Map Filters</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Severity filter */}
               <div className="space-y-2">
                 <h3 className="text-sm font-medium">Severity</h3>
                 <div className="flex flex-wrap gap-2">
@@ -336,7 +305,6 @@ const ThreatMap = () => {
                 </div>
               </div>
 
-              {/* Confidence threshold */}
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <Label htmlFor="confidence">Confidence Threshold</Label>
@@ -352,18 +320,17 @@ const ThreatMap = () => {
                 />
               </div>
 
-              {/* Country filter */}
               <div className="space-y-2">
                 <Label htmlFor="country">Filter by Country</Label>
                 <Select 
-                  value={selectedCountry || ''} 
-                  onValueChange={(value) => setSelectedCountry(value || null)}
+                  value={selectedCountry || 'all'} 
+                  onValueChange={(value) => setSelectedCountry(value === 'all' ? null : value)}
                 >
                   <SelectTrigger id="country">
                     <SelectValue placeholder="All countries" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All countries</SelectItem>
+                    <SelectItem value="all">All countries</SelectItem>
                     {statsByCountry.map(country => (
                       <SelectItem key={country.country} value={country.country}>
                         {country.country} ({country.count})
@@ -375,7 +342,6 @@ const ThreatMap = () => {
             </CardContent>
           </Card>
 
-          {/* Country stats */}
           <Card className="dashboard-card">
             <CardHeader>
               <CardTitle>Threat Hotspots</CardTitle>
@@ -424,8 +390,7 @@ const ThreatMap = () => {
               </div>
             </CardContent>
           </Card>
-          
-          {/* Severity distribution */}
+
           <Card className="dashboard-card">
             <CardHeader>
               <CardTitle>Severity Breakdown</CardTitle>
