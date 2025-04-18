@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAppSelector } from '@/hooks/use-redux-hooks';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -344,29 +345,32 @@ const Analytics = () => {
                     info: { label: "Info", color: COLORS.severity.info }
                   }}
                 >
-                  <RechartsChart>
-                    <Pie
-                      data={severityData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                      nameKey="name"
-                    >
-                      {severityData.map((entry, index) => (
-                        <Cell 
-                          key={`cell-${index}`} 
-                          fill={COLORS.severity[entry.name as ThreatSeverity] || '#6B7280'} 
-                        />
-                      ))}
-                    </Pie>
-                    <ChartTooltip 
-                      content={<ChartTooltipContent />} 
-                    />
-                  </RechartsChart>
-                  <ChartLegend content={<ChartLegendContent />} />
+                  {/* Wrap charts in a fragment to make it a single React element */}
+                  <React.Fragment>
+                    <RechartsChart>
+                      <Pie
+                        data={severityData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                        nameKey="name"
+                      >
+                        {severityData.map((entry, index) => (
+                          <Cell 
+                            key={`cell-${index}`} 
+                            fill={COLORS.severity[entry.name as ThreatSeverity] || '#6B7280'} 
+                          />
+                        ))}
+                      </Pie>
+                      <ChartTooltip 
+                        content={<ChartTooltipContent />} 
+                      />
+                    </RechartsChart>
+                    <ChartLegend content={<ChartLegendContent />} />
+                  </React.Fragment>
                 </ChartContainer>
               </div>
             </CardContent>
@@ -397,29 +401,32 @@ const Analytics = () => {
                     other: { label: "Other", color: COLORS.type.other }
                   }}
                 >
-                  <RechartsChart>
-                    <Pie
-                      data={typeData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                      nameKey="name"
-                    >
-                      {typeData.map((entry, index) => (
-                        <Cell 
-                          key={`cell-${index}`} 
-                          fill={COLORS.type[entry.name as ThreatType] || '#6B7280'} 
-                        />
-                      ))}
-                    </Pie>
-                    <ChartTooltip 
-                      content={<ChartTooltipContent />} 
-                    />
-                  </RechartsChart>
-                  <ChartLegend content={<ChartLegendContent />} />
+                  {/* Wrap charts in a fragment to make it a single React element */}
+                  <React.Fragment>
+                    <RechartsChart>
+                      <Pie
+                        data={typeData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                        nameKey="name"
+                      >
+                        {typeData.map((entry, index) => (
+                          <Cell 
+                            key={`cell-${index}`} 
+                            fill={COLORS.type[entry.name as ThreatType] || '#6B7280'} 
+                          />
+                        ))}
+                      </Pie>
+                      <ChartTooltip 
+                        content={<ChartTooltipContent />} 
+                      />
+                    </RechartsChart>
+                    <ChartLegend content={<ChartLegendContent />} />
+                  </React.Fragment>
                 </ChartContainer>
               </div>
             </CardContent>
@@ -447,29 +454,32 @@ const Analytics = () => {
                     )
                   }
                 >
-                  <RechartsChart>
-                    <Pie
-                      data={sourceData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                      nameKey="name"
-                    >
-                      {sourceData.map((entry, index) => (
-                        <Cell 
-                          key={`cell-${index}`} 
-                          fill={COLORS.source[index % COLORS.source.length]} 
-                        />
-                      ))}
-                    </Pie>
-                    <ChartTooltip 
-                      content={<ChartTooltipContent />} 
-                    />
-                  </RechartsChart>
-                  <ChartLegend content={<ChartLegendContent />} />
+                  {/* Wrap charts in a fragment to make it a single React element */}
+                  <React.Fragment>
+                    <RechartsChart>
+                      <Pie
+                        data={sourceData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                        nameKey="name"
+                      >
+                        {sourceData.map((entry, index) => (
+                          <Cell 
+                            key={`cell-${index}`} 
+                            fill={COLORS.source[index % COLORS.source.length]} 
+                          />
+                        ))}
+                      </Pie>
+                      <ChartTooltip 
+                        content={<ChartTooltipContent />} 
+                      />
+                    </RechartsChart>
+                    <ChartLegend content={<ChartLegendContent />} />
+                  </React.Fragment>
                 </ChartContainer>
               </div>
             </CardContent>
