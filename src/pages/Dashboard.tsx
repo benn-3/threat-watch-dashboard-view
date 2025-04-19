@@ -17,6 +17,8 @@ import { fetchThreatsSuccess } from '@/features/threats/threatSlice';
 import { RootState } from '@/lib/store';
 import { mockThreats, mockThreatStats } from '@/data/mockThreats';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 // Card with metric
 interface MetricCardProps {
@@ -331,6 +333,27 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
+      
+      {/* Map view card with link to threat map */}
+      <Card className="dashboard-card">
+        <CardHeader>
+          <CardTitle className="text-lg font-medium">Threat Map</CardTitle>
+          <CardDescription>Geographical view of threat activity</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col items-center">
+          <div className="text-center mb-4">
+            <p className="text-muted-foreground mb-4">
+              Explore our interactive threat map for real-time geographic visualization of threat activity.
+            </p>
+            <Link to="/map">
+              <Button>
+                <Globe className="mr-2 h-4 w-4" />
+                Open Threat Map
+              </Button>
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
