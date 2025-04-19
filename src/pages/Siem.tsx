@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Terminal } from 'lucide-react';
+import { Terminal, Shield, Database, Lock, Globe, Activity } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -37,13 +36,81 @@ const mockQueries = [
   { id: 4, name: 'Endpoint Issues', description: 'Shows all endpoint-related issues', query: 'source="Endpoint" level IN ("ERROR", "WARNING", "CRITICAL") | sort by timestamp' },
 ];
 
+const detectionSources = [
+  {
+    id: 1,
+    name: 'Network Monitoring',
+    icon: <Shield className="h-10 w-10 text-blue-500" />,
+    description: 'Monitors network traffic for suspicious activities and potential threats.',
+    components: [
+      { name: 'Firewall Logs', description: 'Records of traffic filtered through network security barriers.' },
+      { name: 'IDS Alerts', description: 'Intrusion Detection System warnings for suspicious network activities.' },
+      { name: 'Traffic Analysis', description: 'Examination of network traffic patterns to identify anomalies.' }
+    ]
+  },
+  {
+    id: 2,
+    name: 'Authentication Systems',
+    icon: <Lock className="h-10 w-10 text-green-500" />,
+    description: 'Tracks login attempts, credential changes, and permission modifications.',
+    components: [
+      { name: 'Login Monitoring', description: 'Tracking successful and failed login attempts across systems.' },
+      { name: 'Privilege Changes', description: 'Detection of permission and access right modifications.' },
+      { name: 'MFA Events', description: 'Multi-factor authentication successes, failures, and bypasses.' }
+    ]
+  },
+  {
+    id: 3,
+    name: 'Endpoint Protection',
+    icon: <Terminal className="h-10 w-10 text-purple-500" />,
+    description: 'Monitors workstations and servers for malicious software and behaviors.',
+    components: [
+      { name: 'Antivirus Alerts', description: 'Detection of malware, viruses, and other malicious code.' },
+      { name: 'Behavior Analysis', description: 'Identification of suspicious process and application behaviors.' },
+      { name: 'System Changes', description: 'Critical system modifications that could indicate compromise.' }
+    ]
+  },
+  {
+    id: 4,
+    name: 'Database Monitoring',
+    icon: <Database className="h-10 w-10 text-yellow-500" />,
+    description: 'Detects unusual query patterns and unauthorized data access attempts.',
+    components: [
+      { name: 'SQL Injection Detection', description: 'Identification of malicious SQL code insertion attempts.' },
+      { name: 'Privilege Escalation', description: 'Detection of unauthorized access level increases.' },
+      { name: 'Unusual Query Patterns', description: 'Identification of abnormal database query activities.' }
+    ]
+  },
+  {
+    id: 5,
+    name: 'External Threat Intelligence',
+    icon: <Globe className="h-10 w-10 text-red-500" />,
+    description: 'Integrates external threat data to enhance detection capabilities.',
+    components: [
+      { name: 'Reputation Databases', description: 'Lists of known malicious IPs, domains, and file hashes.' },
+      { name: 'Vulnerability Feeds', description: 'Information about newly discovered security vulnerabilities.' },
+      { name: 'Threat Research', description: 'Intelligence about active threat actors and their techniques.' }
+    ]
+  },
+  {
+    id: 6,
+    name: 'User Activity Monitoring',
+    icon: <Activity className="h-10 w-10 text-indigo-500" />,
+    description: 'Tracks user behaviors to identify insider threats and compromised accounts.',
+    components: [
+      { name: 'Behavioral Analysis', description: 'Detection of unusual user activity patterns.' },
+      { name: 'Access Monitoring', description: 'Tracking of data and resource access attempts.' },
+      { name: 'Privilege Usage', description: 'Monitoring of administrative and elevated privilege use.' }
+    ]
+  }
+];
+
 const Siem = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [queryInput, setQueryInput] = useState('');
   const [logLevel, setLogLevel] = useState(['INFO', 'WARNING', 'ERROR', 'CRITICAL']);
   const { toast } = useToast();
 
-  // Filter logs based on search query and selected log levels
   const filteredLogs = mockLogs.filter(log => 
     (log.message.toLowerCase().includes(searchQuery.toLowerCase()) || 
      log.source.toLowerCase().includes(searchQuery.toLowerCase())) &&
@@ -56,10 +123,30 @@ const Siem = () => {
       description: `Preparing ${filteredLogs.length} logs for export...`,
     });
     
+    const headers = ['Timestamp', 'Source', 'Level', 'Message'];
+    const csvContent = [
+      headers.join(','),
+      ...filteredLogs.map(log => [
+        new Date(log.timestamp).toLocaleString(),
+        log.source,
+        log.level,
+        `"${log.message.replace(/"/g, '""')}"`
+      ].join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `siem_logs_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
     setTimeout(() => {
       toast({
         title: "Export complete",
-        description: "Logs have been exported successfully as CSV file.",
+        description: "Logs have been downloaded successfully as CSV file.",
       });
     }, 2000);
   };
@@ -109,6 +196,7 @@ const Siem = () => {
         <TabsList className="mb-4">
           <TabsTrigger value="logs">Logs</TabsTrigger>
           <TabsTrigger value="alerts">Alerts</TabsTrigger>
+          <TabsTrigger value="sources">Detection Sources</TabsTrigger>
           <TabsTrigger value="query">Query Builder</TabsTrigger>
           <TabsTrigger value="dashboards">Dashboards</TabsTrigger>
         </TabsList>
@@ -244,6 +332,44 @@ const Siem = () => {
                     ))}
                   </TableBody>
                 </Table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="sources">
+          <Card>
+            <CardHeader>
+              <CardTitle>Threat Detection Sources</CardTitle>
+              <CardDescription>
+                Overview of all sources used to detect and monitor threats
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {detectionSources.map((source) => (
+                  <Card key={source.id} className="border-l-4" style={{ borderLeftColor: source.icon.props.className.split(' ').find(c => c.startsWith('text-'))?.replace('text-', 'var(--') + ')'  }}>
+                    <CardHeader className="pb-2">
+                      <div className="flex items-center gap-4">
+                        {source.icon}
+                        <CardTitle>{source.name}</CardTitle>
+                      </div>
+                      <CardDescription className="mt-2">
+                        {source.description}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <h4 className="font-medium mb-2 text-sm">Key Components:</h4>
+                      <ul className="space-y-2">
+                        {source.components.map((component, idx) => (
+                          <li key={idx} className="text-sm">
+                            <span className="font-medium">{component.name}:</span> {component.description}
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
             </CardContent>
           </Card>
