@@ -1,10 +1,11 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Button } from "@/components/ui/button";
 import { Download, Filter, FileText, RefreshCw } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 type Report = {
   id: string;
@@ -79,6 +80,37 @@ const formatDate = (dateString: string) => {
 
 const Reports = () => {
   const [reports] = useState<Report[]>(mockReports);
+  const { toast } = useToast();
+
+  const handleDownload = (report: Report) => {
+    // In a real app, this would trigger an API call to get the actual report file
+    // For this demo, we'll simulate a download with a timeout
+    toast({
+      title: "Download started",
+      description: `Downloading ${report.title}...`,
+    });
+    
+    setTimeout(() => {
+      toast({
+        title: "Download complete",
+        description: `${report.title} has been downloaded successfully.`,
+      });
+    }, 2000);
+  };
+
+  const handleGenerateReport = () => {
+    toast({
+      title: "Report generation started",
+      description: "Your new report is being generated. This may take a few minutes.",
+    });
+    
+    setTimeout(() => {
+      toast({
+        title: "Report generation complete",
+        description: "Your new report is ready to download.",
+      });
+    }, 3000);
+  };
 
   return (
     <div className="container mx-auto py-6">
@@ -93,7 +125,7 @@ const Reports = () => {
             <RefreshCw className="mr-2 h-4 w-4" />
             Refresh
           </Button>
-          <Button>
+          <Button onClick={handleGenerateReport}>
             <FileText className="mr-2 h-4 w-4" />
             Generate New Report
           </Button>
@@ -145,6 +177,7 @@ const Reports = () => {
                       variant="ghost"
                       size="sm"
                       disabled={report.status !== 'completed'}
+                      onClick={() => report.status === 'completed' && handleDownload(report)}
                     >
                       <Download className="h-4 w-4" />
                       <span className="sr-only">Download</span>

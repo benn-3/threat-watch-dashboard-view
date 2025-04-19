@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useToast } from "@/hooks/use-toast";
 
 const mockLogs = [
   { id: 1, timestamp: '2025-04-18T10:15:22Z', source: 'Firewall', level: 'WARNING', message: 'Multiple failed login attempts detected from IP 192.168.1.105' },
@@ -40,6 +41,7 @@ const Siem = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [queryInput, setQueryInput] = useState('');
   const [logLevel, setLogLevel] = useState(['INFO', 'WARNING', 'ERROR', 'CRITICAL']);
+  const { toast } = useToast();
 
   // Filter logs based on search query and selected log levels
   const filteredLogs = mockLogs.filter(log => 
@@ -47,6 +49,52 @@ const Siem = () => {
      log.source.toLowerCase().includes(searchQuery.toLowerCase())) &&
     logLevel.includes(log.level)
   );
+
+  const handleExportLogs = () => {
+    toast({
+      title: "Exporting logs",
+      description: `Preparing ${filteredLogs.length} logs for export...`,
+    });
+    
+    setTimeout(() => {
+      toast({
+        title: "Export complete",
+        description: "Logs have been exported successfully as CSV file.",
+      });
+    }, 2000);
+  };
+
+  const handleRunQuery = () => {
+    if (!queryInput.trim()) {
+      toast({
+        title: "Query Error",
+        description: "Please enter a query to run.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    toast({
+      title: "Running query",
+      description: "Processing your query...",
+    });
+    
+    setTimeout(() => {
+      toast({
+        title: "Query complete",
+        description: "Query executed successfully. Results displayed below.",
+      });
+    }, 1500);
+  };
+
+  const handleInvestigateAlert = (alertId: number) => {
+    const alert = mockAlerts.find(a => a.id === alertId);
+    
+    toast({
+      title: "Investigation started",
+      description: `Investigating alert: ${alert?.title}`,
+    });
+  };
 
   return (
     <div className="container mx-auto py-6">
@@ -129,7 +177,7 @@ const Siem = () => {
               <div className="text-sm text-muted-foreground">
                 Showing {filteredLogs.length} of {mockLogs.length} logs
               </div>
-              <Button variant="outline">Export Logs</Button>
+              <Button variant="outline" onClick={handleExportLogs}>Export Logs</Button>
             </CardFooter>
           </Card>
         </TabsContent>
@@ -184,7 +232,13 @@ const Siem = () => {
                         </TableCell>
                         <TableCell>{alert.source}</TableCell>
                         <TableCell>
-                          <Button variant="ghost" size="sm">Investigate</Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => handleInvestigateAlert(alert.id)}
+                          >
+                            Investigate
+                          </Button>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -218,7 +272,7 @@ const Siem = () => {
               
               <div className="flex justify-end space-x-2">
                 <Button variant="outline">Save Query</Button>
-                <Button>Run Query</Button>
+                <Button onClick={handleRunQuery}>Run Query</Button>
               </div>
               
               <div>
