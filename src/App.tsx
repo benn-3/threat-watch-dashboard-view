@@ -16,6 +16,7 @@ import Settings from "./pages/Settings";
 import Siem from "./pages/Siem";
 import Reports from "./pages/Reports";
 import Entities from "./pages/Entities";
+import IntelligenceFeed from "./pages/IntelligenceFeed";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/layout/Layout";
 import { useEffect } from "react";
@@ -60,6 +61,7 @@ const App = () => {
                 <Route path="/siem" element={<Siem />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/entities" element={<Entities />} />
+                <Route path="/feeds" element={<IntelligenceFeed />} />
               </Route>
               
               <Route path="*" element={<NotFound />} />
