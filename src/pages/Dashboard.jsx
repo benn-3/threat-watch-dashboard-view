@@ -14,27 +14,14 @@ import {
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { fetchThreatsSuccess } from '@/features/threats/threatSlice';
-import { RootState } from '@/lib/store';
 import { mockThreats, mockThreatStats } from '@/data/mockThreats';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
 // Card with metric
-interface MetricCardProps {
-  title: string;
-  value: number | string;
-  description: string;
-  icon: React.ReactNode;
-  trend?: {
-    value: number;
-    isPositive: boolean;
-  };
-  className?: string;
-}
-
-const MetricCard = ({ title, value, description, icon, trend, className }: MetricCardProps) => (
-  <Card className={`dashboard-card ${className}`}>
+const MetricCard = ({ title, value, description, icon, trend, className }) => (
+  <Card className={`dashboard-card ${className || ''}`}>
     <CardHeader className="flex flex-row items-center justify-between pb-2">
       <CardTitle className="text-sm font-medium">{title}</CardTitle>
       {icon}
@@ -79,7 +66,7 @@ const TYPE_COLORS = {
 };
 
 // Format data for pie charts
-const getSeverityData = (stats: any) => {
+const getSeverityData = (stats) => {
   return [
     { name: 'High', value: stats.countBySeverity.high, color: SEVERITY_COLORS.high },
     { name: 'Medium', value: stats.countBySeverity.medium, color: SEVERITY_COLORS.medium },
@@ -88,7 +75,7 @@ const getSeverityData = (stats: any) => {
   ];
 };
 
-const getTypeData = (stats: any) => {
+const getTypeData = (stats) => {
   return [
     { name: 'Malware', value: stats.countByType.malware, color: TYPE_COLORS.malware },
     { name: 'Phishing', value: stats.countByType.phishing, color: TYPE_COLORS.phishing },
@@ -101,7 +88,7 @@ const getTypeData = (stats: any) => {
 };
 
 // Custom tooltip for pie chart
-const CustomTooltip = ({ active, payload }: any) => {
+const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-card p-2 border border-border rounded shadow-sm">
@@ -115,7 +102,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 const Dashboard = () => {
   const dispatch = useDispatch();
   const stats = mockThreatStats;
-  const { threats } = useSelector((state: RootState) => state.threats);
+  const { threats } = useSelector(state => state.threats);
   
   // Load mock threats data when component mounts
   useEffect(() => {
