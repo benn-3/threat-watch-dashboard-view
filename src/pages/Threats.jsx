@@ -53,11 +53,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { RootState } from '@/lib/store';
-import { Threat, ThreatSeverity, ThreatType, fetchThreatsSuccess, selectThreat, setFilters, resetFilters } from '@/features/threats/threatSlice';
+import { fetchThreatsSuccess, selectThreat, setFilters, resetFilters } from '@/features/threats/threatSlice';
 import { mockThreats } from '@/data/mockThreats';
 
-const SeverityBadge = ({ severity }: { severity: ThreatSeverity }) => {
+const SeverityBadge = ({ severity }) => {
   const styles = {
     high: 'bg-threat-high/15 text-threat-high border-threat-high hover:bg-threat-high/20',
     medium: 'bg-threat-warning/15 text-threat-warning border-threat-warning hover:bg-threat-warning/20',
@@ -87,7 +86,7 @@ const SeverityBadge = ({ severity }: { severity: ThreatSeverity }) => {
   );
 };
 
-const TypeBadge = ({ type }: { type: ThreatType }) => {
+const TypeBadge = ({ type }) => {
   const styles = {
     malware: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
     phishing: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300',
@@ -111,7 +110,7 @@ const TypeBadge = ({ type }: { type: ThreatType }) => {
   return <Badge variant="secondary" className={styles[type]}>{labels[type]}</Badge>;
 };
 
-const TagBadge = ({ tag }: { tag: string }) => {
+const TagBadge = ({ tag }) => {
   return (
     <Badge 
       variant="outline" 
@@ -122,7 +121,7 @@ const TagBadge = ({ tag }: { tag: string }) => {
   );
 };
 
-const ThreatDetailDrawer = ({ threat, onClose }: { threat: Threat | null; onClose: () => void }) => {
+const ThreatDetailDrawer = ({ threat, onClose }) => {
   if (!threat) return null;
 
   return (
@@ -265,16 +264,16 @@ const ThreatDetailDrawer = ({ threat, onClose }: { threat: Threat | null; onClos
   );
 };
 
-const ThreatFilters = ({ onApplyFilters, onResetFilters }: any) => {
-  const [selectedSeverities, setSelectedSeverities] = useState<ThreatSeverity[]>([]);
-  const [selectedTypes, setSelectedTypes] = useState<ThreatType[]>([]);
-  const [selectedSources, setSelectedSources] = useState<string[]>([]);
+const ThreatFilters = ({ onApplyFilters, onResetFilters }) => {
+  const [selectedSeverities, setSelectedSeverities] = useState([]);
+  const [selectedTypes, setSelectedTypes] = useState([]);
+  const [selectedSources, setSelectedSources] = useState([]);
 
-  const allSeverities: ThreatSeverity[] = ['high', 'medium', 'low', 'info'];
-  const allTypes: ThreatType[] = ['malware', 'phishing', 'ransomware', 'ddos', 'exploit', 'apt', 'other'];
+  const allSeverities = ['high', 'medium', 'low', 'info'];
+  const allTypes = ['malware', 'phishing', 'ransomware', 'ddos', 'exploit', 'apt', 'other'];
   const allSources = ['AlienVault', 'VirusTotal', 'IBM X-Force', 'Talos Intelligence', 'DashGuard Labs', 'MISP', 'SANS ISC'];
 
-  const toggleSeverity = (severity: ThreatSeverity) => {
+  const toggleSeverity = (severity) => {
     setSelectedSeverities(prev => 
       prev.includes(severity) 
         ? prev.filter(s => s !== severity) 
@@ -282,7 +281,7 @@ const ThreatFilters = ({ onApplyFilters, onResetFilters }: any) => {
     );
   };
 
-  const toggleType = (type: ThreatType) => {
+  const toggleType = (type) => {
     setSelectedTypes(prev => 
       prev.includes(type) 
         ? prev.filter(t => t !== type) 
@@ -290,7 +289,7 @@ const ThreatFilters = ({ onApplyFilters, onResetFilters }: any) => {
     );
   };
 
-  const toggleSource = (source: string) => {
+  const toggleSource = (source) => {
     setSelectedSources(prev => 
       prev.includes(source) 
         ? prev.filter(s => s !== source) 
@@ -385,15 +384,15 @@ const ThreatFilters = ({ onApplyFilters, onResetFilters }: any) => {
 
 const Threats = () => {
   const dispatch = useDispatch();
-  const { threats, filteredThreats, filters, selectedThreat } = useSelector((state: RootState) => state.threats);
+  const { threats, filteredThreats, filters, selectedThreat } = useSelector((state) => state.threats);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
-  const [sortConfig, setSortConfig] = useState<{
-    key: keyof Threat | null;
-    direction: 'asc' | 'desc';
-  }>({ key: 'dateAdded', direction: 'desc' });
+  const [sortConfig, setSortConfig] = useState({
+    key: 'dateAdded',
+    direction: 'desc'
+  });
 
   useEffect(() => {
     if (threats.length === 0) {
@@ -401,13 +400,13 @@ const Threats = () => {
     }
   }, [dispatch, threats.length]);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
     dispatch(setFilters({ searchQuery: query }));
   };
 
-  const handleApplyFilters = (newFilters: any) => {
+  const handleApplyFilters = (newFilters) => {
     dispatch(setFilters(newFilters));
     setIsFilterOpen(false);
   };
@@ -417,7 +416,7 @@ const Threats = () => {
     setIsFilterOpen(false);
   };
 
-  const handleSort = (key: keyof Threat) => {
+  const handleSort = (key) => {
     setSortConfig(prevConfig => ({
       key,
       direction: prevConfig.key === key && prevConfig.direction === 'asc' ? 'desc' : 'asc'
@@ -435,13 +434,13 @@ const Threats = () => {
     const modifier = sortConfig.direction === 'asc' ? 1 : -1;
     
     if (sortConfig.key === 'dateAdded' || sortConfig.key === 'lastSeen') {
-      return new Date(aValue as string) > new Date(bValue as string) ? 1 * modifier : -1 * modifier;
+      return new Date(aValue) > new Date(bValue) ? 1 * modifier : -1 * modifier;
     }
     
-    return aValue! > bValue! ? 1 * modifier : -1 * modifier;
+    return aValue > bValue ? 1 * modifier : -1 * modifier;
   });
 
-  const handleRowClick = (threatId: string) => {
+  const handleRowClick = (threatId) => {
     dispatch(selectThreat(threatId));
     setIsDetailOpen(true);
   };

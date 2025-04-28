@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { RootState } from '@/lib/store';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Threat, ThreatSeverity } from '@/features/threats/threatSlice';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
@@ -14,10 +12,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Layers, Maximize, Minimize, Globe, Activity, MapPin, AlertTriangle, ShieldAlert, Info } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 
-let L: any;
-let map: any;
-let threatMarkers: any[] = [];
-let markerLayer: any;
+let L;
+let map;
+let threatMarkers = [];
+let markerLayer;
 
 const severityColors = {
   high: '#EF4444',
@@ -27,19 +25,19 @@ const severityColors = {
 };
 
 const ThreatMap = () => {
-  const mapContainerRef = useRef<HTMLDivElement>(null);
-  const { threats } = useSelector((state: RootState) => state.threats);
+  const mapContainerRef = useRef(null);
+  const { threats } = useSelector((state) => state.threats);
   const [mapLoaded, setMapLoaded] = useState(false);
-  const [filteredThreats, setFilteredThreats] = useState<Threat[]>([]);
-  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
-  const [selectedSeverities, setSelectedSeverities] = useState<ThreatSeverity[]>(['high', 'medium', 'low', 'info']);
+  const [filteredThreats, setFilteredThreats] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [selectedSeverities, setSelectedSeverities] = useState(['high', 'medium', 'low', 'info']);
   const [confidenceThreshold, setConfidenceThreshold] = useState(0);
   const [viewType, setViewType] = useState('clusters');
-  const [mapView, setMapView] = useState<'standard' | 'satellite'>('standard');
-  const [statsByCountry, setStatsByCountry] = useState<{country: string, count: number}[]>([]);
+  const [mapView, setMapView] = useState('standard');
+  const [statsByCountry, setStatsByCountry] = useState([]);
   const [isFullScreen, setIsFullScreen] = useState(false);
   
-  const toggleSeverity = (severity: ThreatSeverity) => {
+  const toggleSeverity = (severity) => {
     setSelectedSeverities(prev => 
       prev.includes(severity) 
         ? prev.filter(s => s !== severity) 
@@ -57,7 +55,7 @@ const ThreatMap = () => {
     
     setFilteredThreats(filtered);
     
-    const countryStats: Record<string, number> = {};
+    const countryStats = {};
     filtered.forEach(threat => {
       if (threat.location?.country) {
         countryStats[threat.location.country] = (countryStats[threat.location.country] || 0) + 1;
@@ -139,7 +137,7 @@ const ThreatMap = () => {
           }
         });
         
-        map.eachLayer((layer: any) => {
+        map.eachLayer((layer) => {
           if (layer instanceof L.TileLayer) {
             map.removeLayer(layer);
           }
