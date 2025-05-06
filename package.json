@@ -48,6 +48,7 @@
     "embla-carousel-react": "^8.0.0-rc14",
     "input-otp": "^1.0.1",
     "leaflet": "^1.9.4",
+    "lovable-tagger": "^1.1.8",
     "lucide-react": "^0.292.0",
     "next-themes": "^0.2.1",
     "react": "^18.2.0",
